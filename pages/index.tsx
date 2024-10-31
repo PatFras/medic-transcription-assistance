@@ -20,44 +20,44 @@ const HomePage = () => {
 
   const uploadFile = async () => {
     if (file) {
-      const fileReader = new FileReader();
-      fileReader.readAsArrayBuffer(file);
-      fileReader.onload = async (event: ProgressEvent<FileReader>) => {
-        if (event.target?.result) {
-          console.log("Complete File read successfully!", event.target.result);
-          try {
-            const result = await uploadData({
-              data: event.target.result as ArrayBuffer,
-              path: file.name,
-              options: {
-                contentType: file.type
-              }
-            });
-            console.log('File uploaded successfully');
+        const fileReader = new FileReader();
+        fileReader.readAsArrayBuffer(file);
+        fileReader.onload = async (event: ProgressEvent<FileReader>) => {
+            if (event.target?.result) {
+                console.log("Complete File read successfully!", event.target.result);
+                try {
+                    const result = await uploadData({
+                        data: event.target.result as ArrayBuffer,
+                        path: file.name,
+                        options: {
+                            contentType: file.type
+                        }
+                    });
+                    console.log('File uploaded successfully');
 
-            // Llama a la función Lambda para transcribir el audio
-            const response = await fetch('/transcribe', {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json'
-              },
-              body: JSON.stringify({
-                audioFileKey: file.name,
-                languageCode: 'es-ES' // Cambia el código de idioma según tus necesidades
-              })
-            });
+                    // Llama a la función Lambda para transcribir el audio
+                    const response = await fetch('https://fl4rn02ej0.execute-api.sa-east-1.amazonaws.com/dev/my-transcription', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            audioFileKey: file.name,
+                            languageCode: 'es-ES'
+                        })
+                    });
 
-            const data = await response.json();
-            setTranscription(data);
-          } catch (error) {
-            console.log("error", error);
-          }
-        } else {
-          console.log('Error: event.target.result is undefined');
-        }
-      };
+                    const data = await response.json();
+                    setTranscription(data);
+                } catch (error) {
+                    console.log("error", error);
+                }
+            } else {
+                console.log('Error: event.target.result is undefined');
+            }
+        };
     }
-  };
+};
 
   return (
     <Authenticator>
