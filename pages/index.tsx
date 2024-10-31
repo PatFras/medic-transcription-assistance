@@ -1,21 +1,22 @@
-import type { AppProps } from 'next/app';
 import { Authenticator } from '@aws-amplify/ui-react';
 import { Amplify } from 'aws-amplify';
-import awsconfig from '@/amplify_outputs.json'; 
+import awsconfig from '@/amplify_outputs.json'; // Asegúrate de que la ruta a tu archivo de configuración sea correcta
 import '@aws-amplify/ui-react/styles.css';
 
 Amplify.configure(awsconfig);
 
-export default function App({ Component, pageProps }: AppProps) {
+const HomePage = () => {
   return (
     <Authenticator>
       {({ signOut, user }) => (
         <main>
           <h1>Hello {user?.username}</h1>
           <button onClick={signOut}>Sign out</button>
-          <Component {...pageProps} />
+          <p>Welcome to the homepage!</p>
         </main>
       )}
     </Authenticator>
   );
-}
+};
+
+export default HomePage;
