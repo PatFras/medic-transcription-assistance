@@ -25,7 +25,7 @@ export const handler: Handler = async (event, context) => {
 
     const jobParams = {
         TranscriptionJobName: jobName,
-        LanguageCode: languageCode || 'es-ES',
+        LanguageCode: languageCode || 'es-US',
         Media: {
             MediaFileUri: `s3://${bucketName}/${audioFileKey}`
         },

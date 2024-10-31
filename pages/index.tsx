@@ -26,7 +26,7 @@ const HomePage = () => {
         if (event.target?.result) {
           console.log("Complete File read successfully!", event.target.result);
           try {
-            await uploadData({
+            const result = await uploadData({
               data: event.target.result as ArrayBuffer,
               path: file.name,
               options: {
@@ -34,6 +34,21 @@ const HomePage = () => {
               }
             });
             console.log('File uploaded successfully');
+
+            // Llama a la función Lambda para transcribir el audio
+            const response = await fetch('/transcribe', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({
+                audioFileKey: file.name,
+                languageCode: 'es-ES' // Cambia el código de idioma según tus necesidades
+              })
+            });
+
+            const data = await response.json();
+            setTranscription(data);
           } catch (error) {
             console.log("error", error);
           }
@@ -55,6 +70,12 @@ const HomePage = () => {
             <button onClick={uploadFile}>Upload and Transcribe</button>
           </div>
           {uploadProgress !== null && <p>Upload Progress: {uploadProgress.toFixed(2)}%</p>}
+          {transcription && (
+            <div>
+              <h2>Transcription</h2>
+              <p>{transcription}</p>
+            </div>
+          )}
         </main>
       )}
     </Authenticator>
