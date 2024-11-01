@@ -1,0 +1,16 @@
+{
+  "resourceName": "mtaBucket",
+  "policyUUID": "62f1fe58",
+  "bucketName": "mta-transcriptions-bucket",
+  "storageAccess": "authAndGuest",
+  "guestAccess": [
+    "READ"
+  ],
+  "authAccess": [
+    "CREATE_AND_UPDATE",
+    "READ",
+    "DELETE"
+  ],
+  "triggerFunction": "NONE",
+  "groupAccess": {}
+}

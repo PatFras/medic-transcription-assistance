@@ -26,6 +26,9 @@
           "userPoolName": "amplifyAuthUserPool4BA7F805-MlRJSqWrKdxB",
           "webClientId": "52t63vka18qjsvpaed82s0mq2p"
         }
+      },
+      "storage": {
+        "mtaBucket": {}
       }
     }
   }

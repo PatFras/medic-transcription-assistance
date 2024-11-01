@@ -97,5 +97,12 @@
         }
       ]
     }
+  },
+  "storage": {
+    "mtaBucket": {
+      "dependsOn": [],
+      "providerPlugin": "awscloudformation",
+      "service": "S3"
+    }
   }
 }
