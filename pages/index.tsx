@@ -48,7 +48,7 @@ const HomePage = () => {
             });
 
             const data = await response.json();
-            const parsedData = JSON.parse(data); // Parsea la respuesta JSON
+            const parsedData = JSON.parse(data.body); // Parsea la respuesta JSON
             setTranscription(parsedData);
           } catch (error) {
             console.log("error", error);
