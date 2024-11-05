@@ -10,7 +10,7 @@ Amplify.configure(awsconfig);
 const HomePage = () => {
   const [file, setFile] = useState<File | null>(null);
   const [uploadProgress, setUploadProgress] = useState<number | null>(null);
-  const [transcription, setTranscription] = useState<any>(null); // Cambiar a `any` para manejar cualquier tipo de respuesta
+  const [transcription, setTranscription] = useState<any>(null);
 
   const pickFile = (event: ChangeEvent<HTMLInputElement>) => {
     if (event.target.files) {
@@ -35,7 +35,6 @@ const HomePage = () => {
             });
             console.log('File uploaded successfully');
 
-            // Llama a la función Lambda para transcribir el audio
             const response = await fetch('https://xez5wgjcrh.execute-api.sa-east-1.amazonaws.com/dev/transcribe', {
               method: 'POST',
               headers: {
@@ -48,8 +47,12 @@ const HomePage = () => {
             });
 
             const data = await response.json();
-            const parsedData = JSON.parse(data.body); // Parsea la respuesta JSON
-            setTranscription(parsedData);
+            const parsedData = JSON.parse(data.body); // Asegúrate de que la respuesta es la esperada
+            if (parsedData.transcripts) {
+              setTranscription(parsedData.transcripts[0].transcript);
+            } else {
+              console.error("Transcription data is not in the expected format", parsedData);
+            }
           } catch (error) {
             console.log("error", error);
           }
@@ -74,7 +77,7 @@ const HomePage = () => {
           {transcription && (
             <div>
               <h2>Transcription</h2>
-              <pre>{transcription.results.transcripts[0].transcript}</pre>
+              <pre>{transcription}</pre>
             </div>
           )}
         </main>
