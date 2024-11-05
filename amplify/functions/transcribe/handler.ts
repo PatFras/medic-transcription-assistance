@@ -10,6 +10,11 @@ export const handler: Handler = async (event, context) => {
         console.log("Bucket name is not defined");
         return {
             statusCode: 400,
+            headers: {
+                "Access-Control-Allow-Origin": "*",
+                "Access-Control-Allow-Headers": "Content-Type",
+                "Access-Control-Allow-Methods": "OPTIONS,POST"
+            },
             body: JSON.stringify({ message: 'Bucket name is not defined in environment variables' })
         };
     }
@@ -19,6 +24,11 @@ export const handler: Handler = async (event, context) => {
         console.log("Audio file key is missing");
         return {
             statusCode: 400,
+            headers: {
+                "Access-Control-Allow-Origin": "*",
+                "Access-Control-Allow-Headers": "Content-Type",
+                "Access-Control-Allow-Methods": "OPTIONS,POST"
+            },
             body: JSON.stringify({ message: 'Audio file key is missing' })
         };
     }
@@ -41,6 +51,11 @@ export const handler: Handler = async (event, context) => {
         console.log("Error starting transcription job:", error);
         return {
             statusCode: 500,
+            headers: {
+                "Access-Control-Allow-Origin": "*",
+                "Access-Control-Allow-Headers": "Content-Type",
+                "Access-Control-Allow-Methods": "OPTIONS,POST"
+            },
             body: JSON.stringify({ message: 'Error starting transcription job', error })
         };
     }
@@ -56,6 +71,11 @@ export const handler: Handler = async (event, context) => {
             console.log("Error getting transcription job status:", error);
             return {
                 statusCode: 500,
+                headers: {
+                    "Access-Control-Allow-Origin": "*",
+                    "Access-Control-Allow-Headers": "Content-Type",
+                    "Access-Control-Allow-Methods": "OPTIONS,POST"
+                },
                 body: JSON.stringify({ message: 'Error getting transcription job status', error })
             };
         }
@@ -66,6 +86,11 @@ export const handler: Handler = async (event, context) => {
     if (!jobData.TranscriptionJob?.Transcript?.TranscriptFileUri) {
         return {
             statusCode: 500,
+            headers: {
+                "Access-Control-Allow-Origin": "*",
+                "Access-Control-Allow-Headers": "Content-Type",
+                "Access-Control-Allow-Methods": "OPTIONS,POST"
+            },
             body: JSON.stringify({ message: 'Transcript or TranscriptFileUri is missing' })
         };
     }
@@ -82,6 +107,11 @@ export const handler: Handler = async (event, context) => {
         console.log("Error getting transcript data:", error);
         return {
             statusCode: 500,
+            headers: {
+                "Access-Control-Allow-Origin": "*",
+                "Access-Control-Allow-Headers": "Content-Type",
+                "Access-Control-Allow-Methods": "OPTIONS,POST"
+            },
             body: JSON.stringify({ message: 'Error getting transcript data', error })
         };
     }
@@ -90,6 +120,11 @@ export const handler: Handler = async (event, context) => {
         console.log("Transcript data is missing");
         return {
             statusCode: 500,
+            headers: {
+                "Access-Control-Allow-Origin": "*",
+                "Access-Control-Allow-Headers": "Content-Type",
+                "Access-Control-Allow-Methods": "OPTIONS,POST"
+            },
             body: JSON.stringify({ message: 'Transcript data is missing' })
         };
     }
@@ -98,6 +133,11 @@ export const handler: Handler = async (event, context) => {
 
     return {
         statusCode: 200,
+        headers: {
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Headers": "Content-Type",
+            "Access-Control-Allow-Methods": "OPTIONS,POST"
+        },
         body: JSON.stringify({
             message: 'Transcription completed successfully',
             transcript: transcriptData.Body.toString('utf-8')
