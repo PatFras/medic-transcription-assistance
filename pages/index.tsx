@@ -36,7 +36,7 @@ const HomePage = () => {
             console.log('File uploaded successfully');
 
             // Llama a la función Lambda para transcribir el audio
-            const response = await fetch('https://fl4rn02ej0.execute-api.sa-east-1.amazonaws.com/dev/transcribe', {
+            const response = await fetch('https://xez5wgjcrh.execute-api.sa-east-1.amazonaws.com/dev/transcribe', {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json'

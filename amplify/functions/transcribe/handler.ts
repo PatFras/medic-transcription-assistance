@@ -39,7 +39,7 @@ export const handler: Handler = async (event, context) => {
 
   const jobParams = {
     TranscriptionJobName: jobName,
-    LanguageCode: languageCode || 'es-ES', // Ajusta según tus necesidades
+    LanguageCode: languageCode || 'es-ES',
     Media: {
       MediaFileUri: `s3://${process.env.STORAGE_BUCKET_NAME}/${audioFileKey}`
     },
@@ -67,7 +67,6 @@ export const handler: Handler = async (event, context) => {
       "Access-Control-Allow-Origin": "*",
       "Access-Control-Allow-Headers": "Content-Type,Authorization,X-Amz-Date,X-Api-Key,X-Amz-Security-Token",
       "Access-Control-Allow-Methods": "OPTIONS,POST",
-      "Access-Control-Max-Age": "3600"
     },
     body: JSON.stringify({ message: 'Transcription job started successfully' })
   };
