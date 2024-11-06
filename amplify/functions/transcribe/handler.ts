@@ -47,30 +47,31 @@ export const handler: Handler = async (event, context) => {
   };
 
   try {
-    await transcribe.startTranscriptionJob(jobParams).promise();
-  } catch (error) {
-    console.log("Error starting transcription job:", error);
-    return {
-      statusCode: 500,
-      headers: {
-        "Access-Control-Allow-Origin": "*",
-        "Access-Control-Allow-Headers": "Content-Type,Authorization,X-Amz-Date,X-Api-Key,X-Amz-Security-Token",
-        "Access-Control-Allow-Methods": "OPTIONS,POST",
-      },
-      body: JSON.stringify({ message: 'Error starting transcription job', error })
-    };
-  }
-
+  await transcribe.startTranscriptionJob(jobParams).promise();
+  const responseBody = JSON.stringify({ message: 'Transcription job started successfully' });
+  console.log("Response Body:", responseBody); // Registro de la respuesta
   return {
     statusCode: 200,
     headers: {
       "Access-Control-Allow-Origin": "*",
       "Access-Control-Allow-Headers": "Content-Type,Authorization,X-Amz-Date,X-Api-Key,X-Amz-Security-Token",
       "Access-Control-Allow-Methods": "OPTIONS,POST",
+      "Access-Control-Max-Age": "3600"
     },
-    body: JSON.stringify({
-       transcripts: [{
-         transcript: 'Transcription result here' 
-        }]
-  })
+    body: responseBody
+  };
+} catch (error) {
+  console.log("Error starting transcription job:", error);
+  const errorBody = JSON.stringify({ message: 'Error starting transcription job', error });
+  console.log("Error Body:", errorBody); // Registro del cuerpo de error
+  return {
+    statusCode: 500,
+    headers: {
+      "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Headers": "Content-Type,Authorization,X-Amz-Date,X-Api-Key,X-Amz-Security-Token",
+      "Access-Control-Allow-Methods": "OPTIONS,POST",
+      "Access-Control-Max-Age": "3600"
+    },
+    body: errorBody
+  };
 }};

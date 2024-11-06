@@ -1,4 +1,3 @@
-// index.tsx
 import { useState, ChangeEvent } from 'react';
 import { uploadData } from 'aws-amplify/storage';
 import '../configureAmplify';
@@ -23,7 +22,7 @@ const HomePage = () => {
         if (event.target?.result) {
           console.log("Complete File read successfully!", event.target.result);
           try {
-            const result = await uploadData({
+            await uploadData({
               data: event.target.result as ArrayBuffer,
               path: file.name,
               options: {
@@ -31,7 +30,7 @@ const HomePage = () => {
               }
             });
             console.log('File uploaded successfully');
-
+  
             const response = await fetch('https://xez5wgjcrh.execute-api.sa-east-1.amazonaws.com/dev/transcribe', {
               method: 'POST',
               headers: {
@@ -42,9 +41,12 @@ const HomePage = () => {
                 languageCode: 'es-ES'
               })
             });
-
+  
             const data = await response.json();
-            const parsedData = JSON.parse(data.body); // Asegúrate de que la respuesta es la esperada
+            console.log("Transcription API Response:", data); // Registro de la respuesta de la API
+  
+            // Verificar si data.body es una cadena JSON y analizarlo si es necesario
+            const parsedData = typeof data.body === "string" ? JSON.parse(data.body) : data.body;
             if (parsedData.transcripts) {
               setTranscription(parsedData.transcripts[0].transcript);
             } else {
@@ -59,6 +61,8 @@ const HomePage = () => {
       };
     }
   };
+  
+  
 
   return (
     <AuthWrapper>
