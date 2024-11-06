@@ -43,7 +43,7 @@ export const handler: Handler = async (event, context) => {
     Media: {
       MediaFileUri: `s3://${process.env.STORAGE_BUCKET_NAME}/${audioFileKey}`
     },
-    OutputBucketName: process.env.STORAGE_BUCKET_NAME
+    OutputBucketName: 'https://s3.sa-east-1.amazonaws.com/informe-med'
   };
 
   try {
