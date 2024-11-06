@@ -1,12 +1,24 @@
-import { useState, ChangeEvent } from 'react';
-const { Storage } = require('aws-amplify');
+import { useState, useEffect, ChangeEvent } from 'react';
+import { uploadData } from '@aws-amplify/storage'; // Utilizamos uploadData
 import '../configureAmplify';
 import AuthWrapper from './../components/AuthWrapper';
+import { generateClient } from 'aws-amplify/data';
+import type { Schema } from '@/amplify/data/resource';
+
+const client = generateClient<Schema>();
+
+interface Todo {
+  id: string;
+  content: string | null; // Ajuste para permitir null
+  createdAt: string;
+  updatedAt: string;
+}
 
 const HomePage = () => {
   const [file, setFile] = useState<File | null>(null);
   const [uploadProgress, setUploadProgress] = useState<number | null>(null);
   const [transcription, setTranscription] = useState<any>(null);
+  const [todos, setTodos] = useState<Todo[]>([]);
 
   const pickFile = (event: ChangeEvent<HTMLInputElement>) => {
     if (event.target.files) {
@@ -22,11 +34,16 @@ const HomePage = () => {
         if (event.target?.result) {
           console.log("Complete File read successfully!", event.target.result);
           try {
-            await Storage.put(file.name, event.target.result, {
-              contentType: file.type
+            await uploadData({
+              data: event.target.result,
+              path: file.name,
+              options: {
+                contentType: file.type,
+                bucket: 'amplifyTeamDrive'  // Especifica el bucket aquí
+              }
             });
             console.log('File uploaded successfully');
-  
+
             const response = await fetch('https://xez5wgjcrh.execute-api.sa-east-1.amazonaws.com/dev/transcribe', {
               method: 'POST',
               headers: {
@@ -37,10 +54,10 @@ const HomePage = () => {
                 languageCode: 'es-ES'
               })
             });
-  
+
             const data = await response.json();
             console.log("Transcription API Response:", data); // Registro de la respuesta de la API
-  
+
             // Verificar si data.body es una cadena JSON y analizarlo si es necesario
             const parsedData = typeof data.body === "string" ? JSON.parse(data.body) : data.body;
             if (parsedData.transcripts) {
@@ -58,6 +75,19 @@ const HomePage = () => {
     }
   };
 
+  useEffect(() => {
+    const fetchTodos = async () => {
+      try {
+        const { data } = await client.models.Todo.list();
+        setTodos(data);
+      } catch (error) {
+        console.error("Error fetching todos", error);
+      }
+    };
+
+    fetchTodos();
+  }, []);
+
   return (
     <AuthWrapper>
       <div>
@@ -71,6 +101,9 @@ const HomePage = () => {
           <pre>{transcription}</pre>
         </div>
       )}
+      <ul>
+        {todos.map(todo => <li key={todo.id}>{todo.content}</li>)}
+      </ul>
     </AuthWrapper>
   );
 };
