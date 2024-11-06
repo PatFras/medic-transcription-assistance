@@ -1,11 +1,8 @@
-import { Authenticator } from '@aws-amplify/ui-react';
-import { Amplify } from 'aws-amplify';
-import { uploadData } from 'aws-amplify/storage';
-import awsconfig from '@/amplify_outputs.json';
+// index.tsx
 import { useState, ChangeEvent } from 'react';
-import "@aws-amplify/ui-react/styles.css";
-
-Amplify.configure(awsconfig);
+import { uploadData } from 'aws-amplify/storage';
+import '../configureAmplify';
+import AuthWrapper from './../components/AuthWrapper';
 
 const HomePage = () => {
   const [file, setFile] = useState<File | null>(null);
@@ -64,25 +61,19 @@ const HomePage = () => {
   };
 
   return (
-    <Authenticator>
-      {({ signOut, user }) => (
-        <main>
-          <h1>Hello {user?.username}</h1>
-          <button onClick={signOut}>Sign out</button>
-          <div>
-            <input title="file" type="file" onChange={pickFile} />
-            <button onClick={uploadFile}>Upload and Transcribe</button>
-          </div>
-          {uploadProgress !== null && <p>Upload Progress: {uploadProgress.toFixed(2)}%</p>}
-          {transcription && (
-            <div>
-              <h2>Transcription</h2>
-              <pre>{transcription}</pre>
-            </div>
-          )}
-        </main>
+    <AuthWrapper>
+      <div>
+        <input title="file" type="file" onChange={pickFile} />
+        <button onClick={uploadFile}>Upload and Transcribe</button>
+      </div>
+      {uploadProgress !== null && <p>Upload Progress: {uploadProgress.toFixed(2)}%</p>}
+      {transcription && (
+        <div>
+          <h2>Transcription</h2>
+          <pre>{transcription}</pre>
+        </div>
       )}
-    </Authenticator>
+    </AuthWrapper>
   );
 };
 
