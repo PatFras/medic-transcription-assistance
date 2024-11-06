@@ -4,7 +4,7 @@ import type { Handler } from 'aws-lambda';
 const transcribe = new AWS.TranscribeService();
 
 export const handler: Handler = async (event, context) => {
-  console.log("Event:", event); // Registro de evento
+  console.log("Event:", event); // Registro del evento recibido
   let requestBody;
   try {
     requestBody = JSON.parse(event.body);
@@ -47,7 +47,7 @@ export const handler: Handler = async (event, context) => {
     Media: {
       MediaFileUri: `s3://${process.env.STORAGE_BUCKET_NAME}/${audioFileKey}`
     },
-    OutputBucketName: process.env.STORAGE_BUCKET_NAME
+    OutputBucketName: 'amplify-d3cd6ewi1y4w08-de-amplifyteamdrivebucket28-ualvd4d0roez'
   };
 
   try {

@@ -1,5 +1,5 @@
 import { useState, ChangeEvent } from 'react';
-import { uploadData } from 'aws-amplify/storage';
+const { Storage } = require('aws-amplify');
 import '../configureAmplify';
 import AuthWrapper from './../components/AuthWrapper';
 
@@ -22,12 +22,8 @@ const HomePage = () => {
         if (event.target?.result) {
           console.log("Complete File read successfully!", event.target.result);
           try {
-            await uploadData({
-              data: event.target.result as ArrayBuffer,
-              path: file.name,
-              options: {
-                contentType: file.type
-              }
+            await Storage.put(file.name, event.target.result, {
+              contentType: file.type
             });
             console.log('File uploaded successfully');
   
@@ -61,8 +57,6 @@ const HomePage = () => {
       };
     }
   };
-  
-  
 
   return (
     <AuthWrapper>
