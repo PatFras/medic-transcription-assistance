@@ -47,7 +47,7 @@ export const handler: Handler = async (event, context) => {
     Media: {
       MediaFileUri: `s3://${process.env.STORAGE_BUCKET_NAME}/${audioFileKey}`
     },
-    OutputBucketName: 'amplify-d3cd6ewi1y4w08-de-amplifyteamdrivebucket28-ualvd4d0roez'
+    OutputBucketName: 'mta-transcriptions-bucket91478-staging'
   };
 
   try {
