@@ -1,7 +1,7 @@
 {
   "resourceName": "mtaBucket",
   "policyUUID": "62f1fe58",
-  "bucketName": "mta-transcriptions-bucket",
+  "bucketName": "amplify-d3cd6ewi1y4w08-de-amplifyteamdrivebucket28-ualvd4d0roez",
   "storageAccess": "authAndGuest",
   "guestAccess": [
     "READ"
