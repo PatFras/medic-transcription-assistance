@@ -1,78 +1,39 @@
-import AWS from 'aws-sdk';
-import type { Handler } from 'aws-lambda';
+interface TranscriptionEvent {
+  userId: string;
+  audioFileBase64: string;
+  transcription?: string;
+  status: string;
+}
 
-const transcribe = new AWS.TranscribeService();
+const AWS = require('aws-sdk');
+const dynamodb = new AWS.DynamoDB.DocumentClient();
 
-export const handler: Handler = async (event, context) => {
-  console.log("Event:", event); // Registro del evento recibido
-  let requestBody;
-  try {
-    requestBody = JSON.parse(event.body);
-    console.log("Parsed Request Body:", requestBody); // Registro del cuerpo de la solicitud analizado
-  } catch (e) {
-    console.log("Error parsing JSON", e);
-    return {
-      statusCode: 400,
-      headers: {
-        "Access-Control-Allow-Origin": "*",
-        "Access-Control-Allow-Headers": "Content-Type,Authorization,X-Amz-Date,X-Api-Key,X-Amz-Security-Token",
-        "Access-Control-Allow-Methods": "OPTIONS,POST",
-        "Access-Control-Max-Age": "3600"
-      },
-      body: JSON.stringify({ message: 'Invalid JSON format' })
-    };
-  }
+exports.handler = async (event: TranscriptionEvent) => {
+  const { userId, audioFileBase64, transcription = "", status } = event;
+  const uploadTimestamp = new Date().toISOString();
 
-  const { audioFileKey, languageCode } = requestBody;
-  if (!audioFileKey) {
-    console.log("Audio file key is missing");
-    return {
-      statusCode: 400,
-      headers: {
-        "Access-Control-Allow-Origin": "*",
-        "Access-Control-Allow-Headers": "Content-Type,Authorization,X-Amz-Date,X-Api-Key,X-Amz-Security-Token",
-        "Access-Control-Allow-Methods": "OPTIONS,POST",
-        "Access-Control-Max-Age": "3600"
-      },
-      body: JSON.stringify({ message: 'Audio file key is missing' })
-    };
-  }
-
-  console.log(`Starting transcription job for ${audioFileKey}`);
-  const jobName = `transcription_${Date.now()}`;
-
-  const jobParams = {
-    TranscriptionJobName: jobName,
-    LanguageCode: languageCode || 'es-ES',
-    Media: {
-      MediaFileUri: `s3://${process.env.STORAGE_BUCKET_NAME}/${audioFileKey}`
-    },
-    OutputBucketName: 'mta-transcriptions-bucket91478-staging'
+  const params = {
+      TableName: 'UserTranscriptions',
+      Item: {
+          UserId: userId,
+          UploadTimestamp: uploadTimestamp,
+          AudioFileBase64: audioFileBase64, // Audio en formato Base64
+          Transcription: transcription,
+          Status: status
+      }
   };
 
   try {
-    await transcribe.startTranscriptionJob(jobParams).promise();
-    return {
-      statusCode: 200,
-      headers: {
-        "Access-Control-Allow-Origin": "*",
-        "Access-Control-Allow-Headers": "Content-Type,Authorization,X-Amz-Date,X-Api-Key,X-Amz-Security-Token",
-        "Access-Control-Allow-Methods": "OPTIONS,POST",
-        "Access-Control-Max-Age": "3600"
-      },
-      body: JSON.stringify({ message: 'Transcription job started successfully' })
-    };
+      await dynamodb.put(params).promise();
+      return {
+          statusCode: 200,
+          body: JSON.stringify({ message: 'Data stored successfully' })
+      };
   } catch (error) {
-    console.log("Error starting transcription job:", error);
-    return {
-      statusCode: 500,
-      headers: {
-        "Access-Control-Allow-Origin": "*",
-        "Access-Control-Allow-Headers": "Content-Type,Authorization,X-Amz-Date,X-Api-Key,X-Amz-Security-Token",
-        "Access-Control-Allow-Methods": "OPTIONS,POST",
-        "Access-Control-Max-Age": "3600"
-      },
-      body: JSON.stringify({ message: 'Error starting transcription job', error })
-    };
+      console.error(error);
+      return {
+          statusCode: 500,
+          body: JSON.stringify({ message: 'Failed to store data' })
+      };
   }
 };
